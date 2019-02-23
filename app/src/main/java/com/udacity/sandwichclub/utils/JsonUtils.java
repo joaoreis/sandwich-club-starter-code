@@ -7,24 +7,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 public class JsonUtils {
 
-    private static final String TAG = JsonUtils.class.getSimpleName();
+    JsonUtils() {
+        throw new IllegalStateException("Utils class, should not be instantiated.");
+    }
 
     public static Sandwich parseSandwichJson(String json) {
 
-        JSONObject sandwichData = null;
+        JSONObject sandwichData;
 
         String mainName = "";
-        List<String> alsoKnownAs = null;
+        List<String> alsoKnownAs = new ArrayList<>();
         String placeOfOrigin = "";
         String description = "";
         String image = "";
-        List<String> ingredients = null;
+        List<String> ingredients = new ArrayList<>();
 
         try {
             sandwichData = new JSONObject(json);
@@ -39,6 +40,9 @@ public class JsonUtils {
                         JSONArray akaJsonArray = nameJsonObject.getJSONArray("alsoKnownAs");
 
                         mainName = nameJsonObject.getString("mainName");
+                        for (int i = 0; i < akaJsonArray.length(); i++) {
+                            alsoKnownAs.add(akaJsonArray.getString(i));
+                        }
                         break;
 
                     case "placeOfOrigin":
@@ -54,20 +58,23 @@ public class JsonUtils {
                         break;
 
                     case "ingredients":
-                        JSONArray ingredientList = sandwichData.getJSONArray(key);
+                        JSONArray ingredientsArray = sandwichData.getJSONArray(key);
+                        for (int i = 0; i < ingredientsArray.length(); i++) {
+                            ingredients.add(ingredientsArray.getString(i));
+                        }
                         break;
+
+                    default:
+                        throw new JSONException("Failed to parse Json");
                 }
 
-                System.out.println(">>>>>>>   " + key);
-
             }
-
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
-        return new Sandwich(mainName,alsoKnownAs,placeOfOrigin,description,image,ingredients);
+        return new Sandwich(mainName, alsoKnownAs, placeOfOrigin, description, image, ingredients);
     }
 }

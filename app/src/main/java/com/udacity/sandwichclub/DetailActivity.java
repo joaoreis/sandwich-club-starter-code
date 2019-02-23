@@ -3,7 +3,6 @@ package com.udacity.sandwichclub;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,6 +10,8 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.udacity.sandwichclub.model.Sandwich;
 import com.udacity.sandwichclub.utils.JsonUtils;
+
+import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -60,16 +61,45 @@ public class DetailActivity extends AppCompatActivity {
 
     private void populateUI(Sandwich sandwich) {
 
-        TextView tv_also_known = (TextView) findViewById(R.id.tv_also_known);
-        TextView tv_origin = (TextView) findViewById(R.id.tv_origin);
-        TextView tv_description = (TextView) findViewById(R.id.tv_description);
-        TextView tv_ingredients = (TextView) findViewById(R.id.tv_ingredients);
+        TextView tvAlsoKnown = findViewById(R.id.tv_also_known);
+        TextView tvOrigin = findViewById(R.id.tv_origin);
+        TextView tvDescription = findViewById(R.id.tv_description);
+        TextView tvIngredients = findViewById(R.id.tv_ingredients);
 
-        tv_also_known.setText(sandwich.getAlsoKnownAs() == null ? "" : sandwich.getAlsoKnownAs() .toString());
-        tv_origin.setText(sandwich.getPlaceOfOrigin());
-        tv_description.setText(sandwich.getDescription());
-        tv_ingredients.setText(sandwich.getIngredients()  == null ? "" : sandwich.getIngredients().toString());
+        String alsoKnownText = getStringFromList(sandwich.getAlsoKnownAs());
+        showStringOrError(tvAlsoKnown, alsoKnownText, R.string.error_no_other_names);
 
+        String ingredientsText = getStringFromList(sandwich.getIngredients());
+        showStringOrError(tvIngredients, ingredientsText, R.string.error_no_ingredients);
+
+        showStringOrError(tvOrigin, sandwich.getPlaceOfOrigin(), R.string.error_no_place_of_origin);
+
+        showStringOrError(tvDescription, sandwich.getDescription(), R.string.error_no_description);
 
     }
+
+    private void showStringOrError(TextView textView, String shownString, int resId) {
+        if ("".equals(shownString)) {
+            textView.setText(getText(resId));
+        } else {
+            textView.setText(shownString);
+        }
+    }
+
+    private String getStringFromList(List<String> list) {
+        if (list.isEmpty())
+            return "";
+        else {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                builder.append(list.get(i));
+                builder.append(", ");
+            }
+
+            builder.deleteCharAt(builder.length() - 2); //removing last comma
+            return builder.toString();
+        }
+
+    }
+
 }
