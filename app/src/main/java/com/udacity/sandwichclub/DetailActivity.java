@@ -17,6 +17,10 @@ public class DetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
+    TextView tvAlsoKnown;
+    TextView tvOrigin;
+    TextView tvDescription;
+    TextView tvIngredients;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +50,9 @@ public class DetailActivity extends AppCompatActivity {
             return;
         }
 
+        initializeViews();
         populateUI(sandwich);
+
         Picasso.with(this)
                 .load(sandwich.getImage())
                 .placeholder(R.mipmap.ic_launcher)
@@ -56,17 +62,19 @@ public class DetailActivity extends AppCompatActivity {
         setTitle(sandwich.getMainName());
     }
 
+    private void initializeViews() {
+        tvAlsoKnown = findViewById(R.id.tv_also_known);
+        tvOrigin = findViewById(R.id.tv_origin);
+        tvDescription = findViewById(R.id.tv_description);
+        tvIngredients = findViewById(R.id.tv_ingredients);
+    }
+
     private void closeOnError() {
         finish();
         Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
     }
 
     private void populateUI(Sandwich sandwich) {
-
-        TextView tvAlsoKnown = findViewById(R.id.tv_also_known);
-        TextView tvOrigin = findViewById(R.id.tv_origin);
-        TextView tvDescription = findViewById(R.id.tv_description);
-        TextView tvIngredients = findViewById(R.id.tv_ingredients);
 
         String alsoKnownText = getStringFromList(sandwich.getAlsoKnownAs());
         showStringOrError(tvAlsoKnown, alsoKnownText, R.string.error_no_other_names);
