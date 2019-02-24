@@ -12,8 +12,20 @@ import java.util.List;
 
 public class JsonUtils {
 
+    private static final String KEY_NAME = "name";
+    private static final String KEY_ALSO_KNOWN_AS = "alsoKnownAs";
+    private static final String KEY_MAIN_NAME = "mainName";
+    private static final String KEY_PLACE_OF_ORIGIN = "placeOfOrigin";
+    private static final String KEY_DESCRIPTION = "description";
+    private static final String KEY_IMAGE = "image";
+    private static final String KEY_INGREDIENTS = "ingredients";
+
+    private static final String ERROR_PARSING_JSON = "Failed to parse Json";
+    private static final String ERROR_INSTANTIATING_UTILS_CLASS = "Utils class, should not be instantiated.";
+
+
     JsonUtils() {
-        throw new IllegalStateException("Utils class, should not be instantiated.");
+        throw new IllegalStateException(ERROR_INSTANTIATING_UTILS_CLASS);
     }
 
     public static Sandwich parseSandwichJson(String json) {
@@ -35,29 +47,29 @@ public class JsonUtils {
                 String key = keys.next();
 
                 switch (key) {
-                    case "name":
+                    case JsonUtils.KEY_NAME:
                         JSONObject nameJsonObject = sandwichData.getJSONObject(key);
-                        JSONArray akaJsonArray = nameJsonObject.getJSONArray("alsoKnownAs");
+                        JSONArray akaJsonArray = nameJsonObject.getJSONArray(KEY_ALSO_KNOWN_AS);
 
-                        mainName = nameJsonObject.getString("mainName");
+                        mainName = nameJsonObject.getString(KEY_MAIN_NAME);
                         for (int i = 0; i < akaJsonArray.length(); i++) {
                             alsoKnownAs.add(akaJsonArray.getString(i));
                         }
                         break;
 
-                    case "placeOfOrigin":
-                        placeOfOrigin = sandwichData.getString("placeOfOrigin");
+                    case KEY_PLACE_OF_ORIGIN:
+                        placeOfOrigin = sandwichData.getString(KEY_PLACE_OF_ORIGIN);
                         break;
 
-                    case "description":
-                        description = sandwichData.getString("description");
+                    case KEY_DESCRIPTION:
+                        description = sandwichData.getString(KEY_DESCRIPTION);
                         break;
 
-                    case "image":
-                        image = sandwichData.getString("image");
+                    case KEY_IMAGE:
+                        image = sandwichData.getString(KEY_IMAGE);
                         break;
 
-                    case "ingredients":
+                    case KEY_INGREDIENTS:
                         JSONArray ingredientsArray = sandwichData.getJSONArray(key);
                         for (int i = 0; i < ingredientsArray.length(); i++) {
                             ingredients.add(ingredientsArray.getString(i));
@@ -65,15 +77,12 @@ public class JsonUtils {
                         break;
 
                     default:
-                        throw new JSONException("Failed to parse Json");
+                        throw new JSONException(ERROR_PARSING_JSON);
                 }
-
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
         return new Sandwich(mainName, alsoKnownAs, placeOfOrigin, description, image, ingredients);
     }
